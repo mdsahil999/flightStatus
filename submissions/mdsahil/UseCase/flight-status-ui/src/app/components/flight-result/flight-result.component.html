@@ -1,0 +1,67 @@
+<div class="result-card">
+  <div class="result-header">
+    <div class="flight-identity">
+      <div class="flight-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+      </div>
+      <div>
+        <h3>{{ data.flightNumber }}</h3>
+      </div>
+    </div>
+    
+    <div class="status-container">
+      <span class="status-pill" [ngClass]="getStatusClass(data.status)">
+        <span class="dot"></span> {{ getDisplayStatus(data.status) }}
+      </span>
+      <span class="last-updated">Last Updated: {{ data.lastUpdatedUtc | date:'shortTime' }}</span>
+    </div>
+  </div>
+
+  <div class="radar-graphic">
+  </div>
+
+  <div class="flight-details">
+    <div class="detail-item">
+      <span class="label">SCHEDULED DEP.</span>
+      <span class="value">{{ data.scheduledDeparture | date:'HH:mm' }}</span>
+      <span class="subtext">Local Time</span>
+    </div>
+    
+    <div class="detail-item">
+      <span class="label">ACTUAL DEP.</span>
+      <span class="value" [class.text-green]="data.status === 'OnTime'" [class.text-amber]="data.status === 'Delayed'">
+        @if (data.actualDeparture) {
+          {{ data.actualDeparture | date:'HH:mm' }}
+        } @else {
+          --:--
+        }
+      </span>
+      <span class="subtext">
+        @if (data.status === 'OnTime') { Standard }
+        @else if (data.status === 'Delayed') { Delayed }
+        @else { - }
+      </span>
+    </div>
+
+    @if (data.terminal) {
+      <div class="detail-item">
+        <span class="label">TERMINAL</span>
+        <span class="value">{{ data.terminal }}</span>
+      </div>
+    }
+
+    @if (data.gate) {
+      <div class="detail-item">
+        <span class="label">GATE</span>
+        <span class="value">{{ data.gate }}</span>
+      </div>
+    }
+  </div>
+
+  @if (data.delayReason) {
+    <div class="delay-reason-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      <span>Delay Reason: {{ data.delayReason }}</span>
+    </div>
+  }
+</div>
