@@ -29,7 +29,7 @@
     
     <div class="detail-item">
       <span class="label">ACTUAL DEP.</span>
-      <span class="value" [class.text-green]="data.status === 'OnTime'" [class.text-amber]="data.status === 'Delayed'">
+      <span class="value" [class.text-green]="data.status === FlightStatusEnum.OnTime" [class.text-amber]="data.status === FlightStatusEnum.Delayed">
         @if (data.actualDeparture) {
           {{ data.actualDeparture | date:'HH:mm' }}
         } @else {
@@ -37,8 +37,8 @@
         }
       </span>
       <span class="subtext">
-        @if (data.status === 'OnTime') { Standard }
-        @else if (data.status === 'Delayed') { Delayed }
+        @if (data.status === FlightStatusEnum.OnTime) { Standard }
+        @else if (data.status === FlightStatusEnum.Delayed) { Delayed }
         @else { - }
       </span>
     </div>
@@ -58,7 +58,7 @@
     }
   </div>
 
-  @if (data.delayReason) {
+  @if (data.status === FlightStatusEnum.Delayed && data.delayReason) {
     <div class="delay-reason-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
       <span>Delay Reason: {{ data.delayReason }}</span>

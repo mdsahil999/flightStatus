@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FlightStatusResult } from '../../models/flight-status.model';
+import { FlightStatusResult, FlightStatusEnum } from '../../models/flight-status.model';
 
 @Component({
   selector: 'app-flight-result',
@@ -10,23 +10,24 @@ import { FlightStatusResult } from '../../models/flight-status.model';
 })
 export class FlightResultComponent {
   @Input({ required: true }) data!: FlightStatusResult;
+  FlightStatusEnum = FlightStatusEnum;
 
-  getStatusClass(status: string): string {
+  getStatusClass(status: FlightStatusEnum): string {
     switch (status) {
-      case 'OnTime': return 'status-green';
-      case 'Delayed': return 'status-amber';
-      case 'Cancelled':
-      case 'Diverted': return 'status-red';
+      case FlightStatusEnum.OnTime: return 'status-green';
+      case FlightStatusEnum.Delayed: return 'status-amber';
+      case FlightStatusEnum.Cancelled:
+      case FlightStatusEnum.Diverted: return 'status-red';
       default: return 'status-grey';
     }
   }
 
-  getDisplayStatus(status: string): string {
+  getDisplayStatus(status: FlightStatusEnum): string {
     switch (status) {
-      case 'OnTime': return 'ON TIME';
-      case 'Delayed': return 'DELAYED';
-      case 'Cancelled': return 'CANCELLED';
-      case 'Diverted': return 'DIVERTED';
+      case FlightStatusEnum.OnTime: return 'ON TIME';
+      case FlightStatusEnum.Delayed: return 'DELAYED';
+      case FlightStatusEnum.Cancelled: return 'CANCELLED';
+      case FlightStatusEnum.Diverted: return 'DIVERTED';
       default: return 'UNKNOWN';
     }
   }

@@ -5,8 +5,15 @@ namespace FlightStatus.Api.Controllers;
 
 [ApiController]
 [Route("flights")]
-public class FlightStatusController(FlightStatusService service) : ControllerBase
+public class FlightStatusController : ControllerBase
 {
+    private readonly FlightStatusService _service;
+
+    public FlightStatusController(FlightStatusService service)
+    {
+        _service = service;
+    }
+
     [HttpGet("status")]
     public async Task<IActionResult> GetStatus([FromQuery] string? flightNumber, [FromQuery] DateTime? date)
     {
@@ -15,7 +22,7 @@ public class FlightStatusController(FlightStatusService service) : ControllerBas
             return BadRequest(new { Error = "flightNumber and date are required parameters." });
         }
 
-        var result = await service.GetFlightStatusAsync(flightNumber, date.Value);
+        var result = await _service.GetFlightStatusAsync(flightNumber, date.Value);
         return Ok(result);
     }
 }

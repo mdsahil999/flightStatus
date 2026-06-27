@@ -1,18 +1,28 @@
 using FlightStatus.Api.Application.Services;
 using FlightStatus.Api.Domain.Entities;
 using FlightStatus.Api.Domain.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace FlightStatus.Api.Infrastructure.Repositories;
 
-public class FlightStatusRepository(
-    IEnumerable<IFlightStatusProvider> providers,
-    MergeService mergeService,
-    ILogger<FlightStatusRepository> logger) : IFlightStatusRepository
+public class FlightStatusRepository : IFlightStatusRepository
 {
+    private readonly IEnumerable<IFlightStatusProvider> _providers;
+    private readonly MergeService _mergeService;
+    private readonly ILogger<FlightStatusRepository> _logger;
+
+    public FlightStatusRepository(
+        IEnumerable<IFlightStatusProvider> providers,
+        MergeService mergeService,
+        ILogger<FlightStatusRepository> logger)
+    {
+        _providers = providers;
+        _mergeService = mergeService;
+        _logger = logger;
+    }
+
     public async Task<ProviderFlightStatus?> GetFlightDataAsync(string flightNumber, DateTime date)
     {
-        var tasks = providers.Select(async provider =>
+        var tasks = _providers.Select(async provider =>
         {
             try
             {
@@ -20,13 +30,13 @@ public class FlightStatusRepository(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Provider {ProviderName} failed for flight {FlightNumber}", provider.ProviderName, flightNumber);
+                _logger.LogError(ex, "Provider {ProviderName} failed for flight {FlightNumber}", provider.ProviderName, flightNumber);
                 return null;
             }
         });
 
         var results = await Task.WhenAll(tasks);
         
-        return mergeService.Merge(results);
+        return _mergeService.Merge(results);
     }
 }

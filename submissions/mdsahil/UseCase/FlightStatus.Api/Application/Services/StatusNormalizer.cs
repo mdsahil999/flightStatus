@@ -7,12 +7,23 @@ public class StatusNormalizer
 {
     public FlightStatusEnum Normalize(ProviderFlightStatus status)
     {
-        if (status.Status.Equals("Cancelled", StringComparison.OrdinalIgnoreCase))
+        var raw = status.Status;
+
+        // 1. Check for Cancelled / Not Operating
+        if (raw.Equals("Cancelled", StringComparison.OrdinalIgnoreCase) || 
+            raw.Equals("NotOperating", StringComparison.OrdinalIgnoreCase))
+        {
             return FlightStatusEnum.Cancelled;
+        }
 
-        if (status.Status.Equals("Diverted", StringComparison.OrdinalIgnoreCase))
+        // 2. Check for Diverted / Landed Elsewhere
+        if (raw.Equals("Diverted", StringComparison.OrdinalIgnoreCase) || 
+            raw.Equals("LandedElsewhere", StringComparison.OrdinalIgnoreCase))
+        {
             return FlightStatusEnum.Diverted;
+        }
 
+        // 3. Time-based normalization (AeroTrack provides actual times)
         if (status.ActualDeparture.HasValue)
         {
             var diff = status.ActualDeparture.Value - status.ScheduledDeparture;
@@ -30,11 +41,16 @@ public class StatusNormalizer
                 return FlightStatusEnum.Delayed;
             }
         }
-        else if (status.Status.Equals("Delayed", StringComparison.OrdinalIgnoreCase))
+
+        // 4. Fallback for delay vocabularies (QuickFlight or missing times)
+        if (raw.Equals("DepartedLate", StringComparison.OrdinalIgnoreCase) || 
+            raw.Equals("RunningBehind", StringComparison.OrdinalIgnoreCase) ||
+            raw.Equals("Delayed", StringComparison.OrdinalIgnoreCase))
         {
             return FlightStatusEnum.Delayed;
         }
 
+        // 5. Default to OnTime for Scheduled, Boarding, Departed, OnSchedule
         return FlightStatusEnum.OnTime;
     }
 }

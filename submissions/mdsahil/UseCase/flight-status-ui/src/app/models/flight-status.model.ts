@@ -1,8 +1,14 @@
-export type UnifiedStatus = 'OnTime' | 'Delayed' | 'Cancelled' | 'Diverted' | 'Unknown';
+export enum FlightStatusEnum {
+  OnTime = 0,
+  Delayed = 1,
+  Cancelled = 2,
+  Diverted = 3,
+  Unknown = 4
+}
 
 export interface FlightStatusResult {
   flightNumber: string;
-  status: UnifiedStatus;
+  status: FlightStatusEnum;
   scheduledDeparture: string;
   actualDeparture?: string;
   scheduledArrival: string;
